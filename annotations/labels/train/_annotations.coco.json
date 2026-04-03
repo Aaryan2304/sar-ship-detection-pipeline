@@ -1,0 +1,232 @@
+{
+  "info": {
+    "description": "SAR ship detection \u2014 Umbra open-source imagery",
+    "url": "https://github.com/Aaryan2304/sar-ship-detection-pipeline",
+    "version": "1.0",
+    "year": 2026
+  },
+  "licenses": [
+    {
+      "id": 1,
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "name": "CC BY 4.0"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "ship",
+      "supercategory": "none"
+    }
+  ],
+  "images": [
+    {
+      "id": 0,
+      "license": 1,
+      "file_name": "sar_image_1_r3456_c2880_png.rf.1a37934e1d5df49d8ac308375521534b.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_1_r3456_c2880.png"
+      }
+    },
+    {
+      "id": 1,
+      "license": 1,
+      "file_name": "sar_image_1_r4032_c3456_png.rf.4842b11e5296d9e7b03d92b1c19475d9.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_1_r4032_c3456.png"
+      }
+    },
+    {
+      "id": 2,
+      "license": 1,
+      "file_name": "sar_image_1_r2880_c2880_png.rf.1e749026d59a092be966118b007b39d5.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_1_r2880_c2880.png"
+      }
+    },
+    {
+      "id": 3,
+      "license": 1,
+      "file_name": "sar_image_3_r2880_c576_png.rf.206f2b8f02af2fa538653e6b99599aec.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_3_r2880_c576.png"
+      }
+    },
+    {
+      "id": 4,
+      "license": 1,
+      "file_name": "sar_image_1_r3456_c3456_png.rf.c9d813b059a6e0542a0a36114ba7ada5.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_1_r3456_c3456.png"
+      }
+    },
+    {
+      "id": 5,
+      "license": 1,
+      "file_name": "sar_image_2_r3456_c4032_png.rf.89bcebe4778ad07f4080fce37bed7578.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_2_r3456_c4032.png"
+      }
+    }
+  ],
+  "annotations": [
+    {
+      "id": 1,
+      "image_id": 0,
+      "category_id": 1,
+      "bbox": [
+        377,
+        0,
+        156.44,
+        193.7
+      ],
+      "area": 30302.428,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 2,
+      "image_id": 0,
+      "category_id": 1,
+      "bbox": [
+        556,
+        354,
+        84.44,
+        220.48
+      ],
+      "area": 18617.331,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 3,
+      "image_id": 1,
+      "category_id": 1,
+      "bbox": [
+        97,
+        0,
+        136,
+        188
+      ],
+      "area": 25568,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 4,
+      "image_id": 1,
+      "category_id": 1,
+      "bbox": [
+        236,
+        235,
+        169.78,
+        284.28
+      ],
+      "area": 48265.058,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 5,
+      "image_id": 2,
+      "category_id": 1,
+      "bbox": [
+        254,
+        275,
+        106.44,
+        160.75
+      ],
+      "area": 17110.23,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 6,
+      "image_id": 2,
+      "category_id": 1,
+      "bbox": [
+        347,
+        441,
+        141,
+        199
+      ],
+      "area": 28059,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 7,
+      "image_id": 3,
+      "category_id": 1,
+      "bbox": [
+        517,
+        301,
+        120,
+        339
+      ],
+      "area": 40680,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 8,
+      "image_id": 3,
+      "category_id": 1,
+      "bbox": [
+        26,
+        19,
+        90,
+        412.75
+      ],
+      "area": 37147.5,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 9,
+      "image_id": 4,
+      "category_id": 1,
+      "bbox": [
+        63,
+        475,
+        126.89,
+        165.33
+      ],
+      "area": 20978.724,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 10,
+      "image_id": 5,
+      "category_id": 1,
+      "bbox": [
+        0,
+        474,
+        174.22,
+        117.37
+      ],
+      "area": 20448.201,
+      "segmentation": [],
+      "iscrowd": 0
+    }
+  ]
+}

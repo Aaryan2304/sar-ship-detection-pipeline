@@ -1,0 +1,45 @@
+# Byte-compiled / optimized
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Source GeoTIFFs (large raw data)
+data/raw/*.tif
+data/raw/*.tiff
+data/raw/*.geotiff
+data/raw/*.TIF
+
+# Generated chips (reproducible via chip-tiles CLI)
+data/chips/sar_image_*/
+data/chips/*.png
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temp
+.cache/
+tmp/
+*.tmp
+*.log

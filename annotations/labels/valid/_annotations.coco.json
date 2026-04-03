@@ -1,0 +1,65 @@
+{
+  "info": {
+    "description": "SAR ship detection \u2014 Umbra open-source imagery",
+    "url": "https://github.com/Aaryan2304/sar-ship-detection-pipeline",
+    "version": "1.0",
+    "year": 2026
+  },
+  "licenses": [
+    {
+      "id": 1,
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "name": "CC BY 4.0"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "ship",
+      "supercategory": "none"
+    }
+  ],
+  "images": [
+    {
+      "id": 0,
+      "license": 1,
+      "file_name": "sar_image_3_r4032_c2304_png.rf.bcdbc1b66ca85a78519d53fb998b500f.jpg",
+      "height": 640,
+      "width": 640,
+      "date_captured": "2026-02-26T15:48:03+00:00",
+      "extra": {
+        "name": "sar_image_3_r4032_c2304.png"
+      }
+    }
+  ],
+  "annotations": [
+    {
+      "id": 1,
+      "image_id": 0,
+      "category_id": 1,
+      "bbox": [
+        50,
+        346,
+        84.67,
+        256.7
+      ],
+      "area": 21734.789,
+      "segmentation": [],
+      "iscrowd": 0
+    },
+    {
+      "id": 2,
+      "image_id": 0,
+      "category_id": 1,
+      "bbox": [
+        338,
+        382,
+        104.22,
+        257.56
+      ],
+      "area": 26842.903,
+      "segmentation": [],
+      "iscrowd": 0
+    }
+  ]
+}
