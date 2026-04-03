@@ -19,16 +19,6 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Source GeoTIFFs (large raw data)
-data/raw/*.tif
-data/raw/*.tiff
-data/raw/*.geotiff
-data/raw/*.TIF
-
-# Generated chips (reproducible via chip-tiles CLI)
-data/chips/sar_image_*/
-data/chips/*.png
-
 # Virtual environments
 .venv/
 venv/
@@ -43,3 +33,8 @@ env/
 tmp/
 *.tmp
 *.log
+project_upgrade.txt
+project_upgrade.txt
+project_upgrade.txt
+project_upgrade.txt
+project_upgrade.txt
