@@ -8,25 +8,42 @@ build/
 dist/
 *.egg-info
 *.egg
-# IDE
+
+# IDE / editors
 .vscode/
 .idea/
 *.swp
 *.swo
+
 # OS
 .DS_Store
 Thumbs.db
+
 # Virtual environments
 .venv/
 venv/
 ENV/
 env/
+
 # Jupyter
 .ipynb_checkpoints/
+
 # Temp
 .cache/
 tmp/
 *.tmp
 *.log
-project_upgrade.txt
-project_upgrade.txt
+
+# Planning / personal notes (internal, not for public repo)
+project_upgrade.*
+notes.*
+
+# Model weights and training artifacts (keep only final best.pt)
+weights/*.pt
+weights/*.onnx
+weights/*.engine
+!weights/best.pt
+runs/
+
+# Downloaded external datasets
+data/ssrd-hrsid/
