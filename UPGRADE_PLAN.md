@@ -9,16 +9,30 @@ with cross-domain evaluation, ablation studies, geo-referenced inference, and op
 
 ## Phase 1 — Data Acquisition & Preparation
 
-### 1.1 External Datasets
+### 1.1 SSDD (Primary and sole training dataset)
 
-| Dataset | Ships | Labels | Resolution | Notes |
-|---------|-------|--------|------------|-------|
-| **SSDD** | ~2,800 | XML / TXT | 1–15m | Coastal, port scenes. Canonical benchmark. |
-| **HRSID** | ~36,000 | COCO JSON | 0.5–3m | Higher res, dense ship clusters. |
-| **DOTAv1** | ~18,000 ships | 8-pt polygons | 0.3–30m | Multi-class, includes OBB labels. |
+| Variant | Ships | Labels | Resolution |
+|---------|-------|--------|------------|
+| BBox-SSDD | 2,456 | Axis-aligned `[x_min, y_min, x_max, y_max]` | 1–15m |
+| **RBox-SSDD** | 2,456 | Rotated `[cx, cy, w, h, angle]` | 1–15m |
+| PSeg-SSDD | 2,456 | Polygon segmentation | 1–15m |
 
-Sources: SSDD (`github.com/YoungFish0212/SSDD`), HRSID (`github.com/chaozhong2010/HRSID`),
-DOTAv1 (`captain-whu.github.io/DOTA`).
+**Download RBox-SSDD** (from the official release by the original authors):
+
+- Google Drive: `https://drive.google.com/file/d/1glNJUGotrbEyk43twwB9556AdngJsynZ/view?usp=sharing`
+- Baidu Pan: `https://pan.baidu.com/s/1Lpg28ZvMSgNXq00abHMZ5Q` password: `2021`
+- Paper: Zhang et al., "SAR Ship Detection Dataset (SSDD): Official Release and Comprehensive Data Analysis", Remote Sensing 2021
+- GitHub: `github.com/TianwenZhang0825/Official-SSDD`
+
+1,160 SAR images from TerraSAR-X, RadarSat-2, Sentinel-1. Coastal, port, inshore scenes.
+
+We use **RBox-SSDD** — native rotated box labels, no HBB→OBB conversion needed.
+
+Why SSDD-only (not HRSID, CAESAR, or DOTAv1):
+- SSDD is SAR-specific with native OBB labels (RBox-SSDD variant)
+- HRSID/CAESAR are HBB-only — same conversion problem, more data, slower iterations
+- DOTAv1 is optical/aerial imagery — wrong sensor entirely
+- 2,456 ships is sufficient for an OBB detector on single-class ship detection
 
 ### 1.2 Existing Data
 
@@ -28,30 +42,29 @@ DOTAv1 (`captain-whu.github.io/DOTA`).
 
 ### 1.3 Label Format Conversion
 
-Problem: SSDD uses Pascal VOC XML with HBB `[x, y, w, h]`. HRSID uses COCO JSON with HBB.
-Ultralytics OBB needs `[x_ctr, y_ctr, w, h, angle]`.
-
+RBox-SSDD uses rotated boxes but likely in a different coordinate convention than Ultralytics.
 New script: `tools/convert_labels.py`
-- Parse SSDD XML → extract HBB
-- Convert HBB to OBB: estimate rotation from ship bright-pixel geometry within the box
-  (fit rotated rectangle to thresholded bright pixels, or use segmentations if available)
-- Output Ultralytics YOLO-OBB TXT files per image
-- If SSDD HBB→OBB quality is poor, switch to DOTAv1 (native OBB labels, ships included)
+
+- Parse RBox-SSDD labels (XML for RBox variant)
+- Verify label format and angle convention (check the MDPI paper §3.2 for RBox parameterization)
+- Convert to Ultralytics YOLO-OBB TXT format: `[class_id, x_ctr, y_ctr, w, h, angle]`
+- Validate by overlaying converted labels on images (spot check 50+ images)
 
 ### 1.4 Dataset Splits
 
 ```
-Training: 70% SSDD (converted to OBB)
-Validation: 15% SSDD
-Test: 15% SSDD + 8 Umbra chips (held-out cross-domain)
+Training: 80% RBox-SSDD (official train split, or random split if pre-split not available)
+Test:     20% RBox-SSDD + 8 Umbra chips (held-out cross-domain)
 ```
+
+If the official release provides a standard split, use it for comparability with literature.
 
 ### 1.5 Reusable Existing Code
 
 | File | Action | Notes |
 |------|--------|-------|
 | `chip_tiles.py` | Keep | Edge handling works |
-| `augment_data.py` | Keep | Disable HSV augment for SAR, keep geometric |
+| `augment_data.py` | Keep | Disable HSV augment for SAR, keep geometric (rotation, flip, mosaic) |
 | `ingest_fiftyone.py` | Update | Support OBB visualization |
 
 ---
@@ -177,10 +190,7 @@ Output: JSON + optional GeoJSON for QGIS import.
 CLI:
 
 ```bash
-python infer_sahi.py --model weights/best.pt \
-  --input data/raw/sar_image_1.tif \
-  --output results/sar_image_1_detections.json \
-  --slice-size 512 --overlap 0.2
+python infer_sahi.py --model weights/best.pt   --input data/raw/sar_image_1.tif   --output results/sar_image_1_detections.json   --slice-size 512 --overlap 0.2
 ```
 
 ---
@@ -221,7 +231,7 @@ Expect 2-3x speedup with TensorRT. SAHI multiplies this across 459+ tiles per sc
 ### 6.1 README Rewrite
 
 - Project overview with OBB focus
-- Dataset composition (SSDD + Umbra)
+- Dataset: RBox-SSDD (SAR-specific, native OBB labels) + Umbra cross-domain test
 - Quick start: install, download data, train, evaluate
 - SAHI inference with geo-referenced output demo
 - Benchmark results table
@@ -233,8 +243,7 @@ Expect 2-3x speedup with TensorRT. SAHI multiplies this across 459+ tiles per sc
 sar-ship-detection-pipeline/
 ├── pipeline/                    # Existing (chip_tiles, augment, ingest)
 ├── tools/
-│   ├── convert_labels.py        # New: SSDD/HRSID → YOLO-OBB
-│   └── export_model.py          # New: ONNX + TensorRT
+│   └── convert_labels.py        # New: RBox-SSDD → YOLO-OBB
 ├── infer_sahi.py                # New: SAHI inference + geo-ref
 ├── evaluate.py                  # New: cross-domain evaluation
 ├── configs/default.yaml         # Training config
@@ -245,8 +254,7 @@ sar-ship-detection-pipeline/
 ├── requirements.txt
 ├── setup.py
 ├── README.md
-├── UPGRADE_PLAN.md              # This file
-└── .gitignore
+└── UPGRADE_PLAN.md              # This file
 ```
 
 ### 6.3 Updated Requirements
@@ -287,7 +295,7 @@ entry_points={
 
 ### 6.5 Git LFS (if needed)
 
-If model checkpoints or dataset subsets push repo past GitHub's limits:
+If model checkpoints push repo past GitHub's limits:
 
 ```bash
 git lfs install
@@ -300,14 +308,14 @@ git lfs track "*.pt" "*.onnx" "*.engine"
 
 | Phase | Work | Effort |
 |-------|------|--------|
-| 1. Data | Download SSDD, convert labels | 2-3 days |
+| 1. Data | Download RBox-SSDD, convert labels to YOLO-OBB | 1 day |
 | 2. Training | YOLO11-OBB baseline, W&B | 2-3 days |
 | 3. Eval | Cross-domain + normalization ablation | 2 days |
 | 4. SAHI | Inference pipeline + geo-referencing | 2-3 days |
 | 5. Optimize | ONNX/TensorRT + benchmarking | 1-2 days |
 | 6. Docs | README, cleanup, packaging | 1-2 days |
 
-**Total: 10-15 days focused work**
+**Total: 9-12 days focused work**
 
 ---
 
@@ -315,15 +323,17 @@ git lfs track "*.pt" "*.onnx" "*.engine"
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| SSDD labels are HBB-only (no rotation) | High | Estimate OBB from bright-pixel geometry; switch to DOTAv1 if quality is poor |
+| RBox-SSDD angle convention differs from Ultralytics | High | Verify by visual overlay; the convert script must be validated before training |
+| RBox-SSDD download link inaccessible | Medium | Mirror via Kaggle (SSDD is also available there), contact authors |
 | 4GB VRAM insufficient | Medium | Batch 4-8 + gradient accumulation + AMP |
 | Cross-domain mAP < 10% | Medium | Fine-tune on Umbra chips with low LR; report both raw and fine-tuned |
 | SAHI inference too slow | Medium | TensorRT FP16 is mandatory, not optional |
 
 ## Key Decisions
 
-1. **SSDD vs DOTAv1 for training?** Start with SSDD (SAR-specific, smaller). Switch to
-   DOTAv1 if HBB→OBB conversion quality is poor.
+1. **SSDD-only for training.** No HRSID, no CAESAR, no DOTAv1. SSDD is SAR-specific
+   with native OBB labels (RBox-SSDD). Adding more data doesn't solve the harder
+   problems (cross-domain gap, geo-referencing, optimization).
 2. **Fine-tune on Umbra chips?** Both: report raw SSDD→Umbra gap first, then fine-tune.
 3. **Keep geo-referencing?** Yes. This is the differentiator from a generic CV project.
 
@@ -334,3 +344,5 @@ git lfs track "*.pt" "*.onnx" "*.engine"
 - Speckle filtering ablation (literature already characterized)
 - Web UI (FiftyOne is sufficient)
 - Docker container (defer until inference serving)
+- SL-SSDD sea-land masks (interesting but not core — consider after v2 is done)
+
