@@ -8,33 +8,25 @@ build/
 dist/
 *.egg-info
 *.egg
-
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
 # OS
 .DS_Store
 Thumbs.db
-
 # Virtual environments
 .venv/
 venv/
 ENV/
 env/
-
 # Jupyter
 .ipynb_checkpoints/
-
 # Temp
 .cache/
 tmp/
 *.tmp
 *.log
-project_upgrade.txt
-project_upgrade.txt
-project_upgrade.txt
 project_upgrade.txt
 project_upgrade.txt
