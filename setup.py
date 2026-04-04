@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name="sar-ship-detection",
     version="0.1.0",
-    author="Aaryan Minocha",
+    author="Aaryan Kurade",
     author_email="aaryan2304@gmail.com",
     description="SAR ship detection pipeline for Umbra satellite imagery",
     long_description=open("README.md").read(),
