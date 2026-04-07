@@ -1,50 +1,31 @@
-# SSDD Dataset — Rotated Bounding Boxes
+# SSDD (Ship Detection in SAR Images Dataset) - YOLO OBB Format
 
-SAR Ship Detection Dataset (SSDD) with rotated box (RBox) annotations.
+## Overview
+SSDD dataset adapted for oriented bounding box (OBB) ship detection.
 
 ## Source
+- Original: RBox_SSDD variant from public benchmark
+- Annotations: Pascal VOC XML with `rotated_bndbox` (cx, cy, w, h, theta) + explicit corners
+- Converted to YOLO-OBB format via `tools/convert_ssdd_to_yolo_obb.py`
 
-Downloaded from the official SSDD repository. Contains 1,160 SAR images
-with ship annotations in rotated bounding box format.
+## Statistics
+- **Images:** 1160 JPGs (~400x300 to ~600x400 px)
+- **Instances:** 2587 ships
+- **Classes:** 1 (ship)
+- **Splits:** 928 train / 232 test (+ inshore/offshore sub-splits)
 
-## Stats
+## Label Format
+- Files: `datasets/SSDD/labels/*.txt` (one per image)
+- Format: `class cx cy w h angle` (5 values, all normalized [0,1])
+- Angle: radians in range [-pi/4, 3pi/4)
+- Convention: standard 2D rotation in image coordinates (verified 0.95px median error)
 
-| Split        | Images |
-|-------------|--------|
-| Train        | 928    |
-| Test         | 232    |
-| └ Inshore    | 46     |
-| └ Offshore   | 186    |
-| **Total**    | **1,160** |
-
-- Class: `ship` (single class)
-- Annotation format: VOC-style XML with 4-corner rotated bboxes + center/width/height/theta
-
-## Structure
-
+## Directory Structure
 ```
-SSDD/
-├── images/          # 1,160 JPEGs
-├── annotations/     # 1,160 VOC XMLs (1:1 with images)
-└── splits/
-    ├── train.txt            # 928 image IDs
-    ├── test.txt             # 232 image IDs
-    ├── test_inshore.txt     # 46 test images (coastal/harbor)
-    └── test_offshore.txt    # 186 test images (open water)
+datasets/SSDD/
+├── dataset.yaml      # Ultralytics dataset config
+├── images/           # 1160 JPGs
+├── annotations/      # 1160 XML (Pascal VOC with rotated_bndbox)
+├── labels/           # 1160 YOLO OBB .txt files
+└── splits/           # train.txt, test.txt, test_inshore.txt, test_offshore.txt
 ```
-
-## Annotation Format
-
-Each XML contains a `<rotated_bndbox>` block with:
-- 4 corners: `(x1,y1), (x2,y2), (x3,y3), (x4,y4)`
-- Center: `(rotated_bbox_cx, rotated_bbox_cy)`
-- Dimensions: `rotated_bbox_w`, `rotated_bbox_h`
-- Orientation: `rotated_bbox_theta` (degrees)
-
-Images are 3-channel JPEGs (SAR data converted to RGB for visualization).
-Actual SAR pixel values are NOT preserved — this is a processed benchmark.
-
-## License
-
-Follow the original SSDD dataset license terms. Check the source repository
-for usage restrictions.

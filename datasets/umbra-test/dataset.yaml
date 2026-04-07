@@ -1,0 +1,13 @@
+# Umbra SAR ship detection test dataset
+# Origin: Chips extracted from Umbra Space GeoTIFFs
+# Task: OBB (oriented bounding box) detection
+# Classes: ship (1 class)
+
+path: datasets/umbra-test  # dataset root dir
+train: images/train  # no train split yet (only test + negative)
+val: test/images  # use test split for validation
+test: test/images
+
+# Classes
+names:
+  0: ship

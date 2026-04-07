@@ -1,0 +1,13 @@
+# SSDD (SAR Ship Detection Dataset) for OBB training
+# Source: RBox_SSDD (rotated bounding boxes)
+# 1160 images, 2587 ship instances
+# Splits: 928 train / 232 test (official SSDD splits)
+
+path: datasets/SSDD
+train: images
+val: images
+test: images
+
+# Classes
+names:
+  0: ship
