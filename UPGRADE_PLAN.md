@@ -36,9 +36,8 @@ Why SSDD-only (not HRSID, CAESAR, or DOTAv1):
 
 ### 1.2 Existing Data
 
-- **8 annotated Umbra chips** (13 ships) — cross-domain test set only, not training
-- **459 generated chips** — reproducible via `chip_tiles.py`
-- **3 GeoTIFF source files** — source of truth, keep tracked
+- **40 annotated Umbra chips** (30 positive + 10 negative) — cross-domain test set
+- **7 GeoTIFF source files** — 3 original + 4 newly downloaded
 
 ### 1.3 Label Format Conversion
 
@@ -53,8 +52,8 @@ New script: `tools/convert_labels.py`
 ### 1.4 Dataset Splits
 
 ```
-Training: 80% RBox-SSDD (official train split, or random split if pre-split not available)
-Test:     20% RBox-SSDD + 8 Umbra chips (held-out cross-domain)
+Training: RBox-SSDD train split (928 images)
+Test:     RBox-SSDD test split (232 images) + 40 Umbra chips (held-out cross-domain)
 ```
 
 If the official release provides a standard split, use it for comparability with literature.
@@ -119,7 +118,7 @@ inference speed per image.
 
 ### 3.2 Cross-Domain Evaluation
 
-Test SSDD-trained model on 8 Umbra chips.
+Test SSDD-trained model on 40 Umbra chips (30 annotated, 10 negative).
 
 Expect significant mAP drop. SSDD is coastal/port imagery; Umbra is open-ocean,
 different sensor, different resolution. Report:
@@ -222,7 +221,7 @@ SM 86 (3050 Ti) fully supported in TensorRT 10.x.
 
 New file: `tools/export_model.py` — handles PyTorch→ONNX→TensorRT + output verification.
 
-Expect 2-3x speedup with TensorRT. SAHI multiplies this across 459+ tiles per scene.
+Expect 2-3x speedup with TensorRT. SAHI multiplies this across hundreds of tiles per scene.
 
 ---
 

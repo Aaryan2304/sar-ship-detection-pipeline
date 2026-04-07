@@ -2,53 +2,59 @@
 
 ## Project Description
 
-This repository contains a complete pipeline for detecting ships in Synthetic Aperture Radar (SAR) imagery. It demonstrates an end-to-end data preparation workflow for satellite-based object detection — from raw GeoTIFF ingestion through chipping, augmentation, COCO annotation management, and FiftyOne visualization.
+Complete pipeline for oriented bounding box (OBB) ship detection in SAR imagery, from training on the SSDD benchmark to cross-domain evaluation on custom Umbra Space chips.
 
 ## What It Does
 
-1. **Chips GeoTIFFs** into ML-ready tiles using sliding windows with configurable overlap
-2. **Augments training data** with 9 transformations while maintaining correct COCO bounding boxes
-3. **Manages and visualizes** the dataset through FiftyOne with QC tagging and metadata enrichment
+1. **Chips GeoTIFFs** into ML-ready 640×640 tiles with configurable overlap
+2. **Converts SSDD annotations** from Pascal VOC RBox → YOLO OBB format (angle verified at 0.95px median error)
+3. **Trains YOLOv8/v11-OBB** on 1,160 SSDD images (2,587 ship instances)
+4. **Evaluates cross-domain generalization** on 40 Umbra chips (30 annotated + 10 negative)
+5. **Augments COCO-labeled chips** with 9 bbox-aware transformations
+6. **Visualizes** in FiftyOne with QC tagging and metadata
 
 ## Project Structure
 
 ```
 sar-ship-detection-pipeline/
-├── data/
-│   ├── raw/            # Source SAR GeoTIFFs (included)
-│   │   └── README.md
-│   └── chips/          # Chip metadata sidecars
-│       └── *_chips_meta.json
-├── annotations/
-│   └── labels/         # COCO annotations + images (Roboflow format)
-│       ├── train/
-│       ├── valid/
-│       ├── test/
-│       └── augmented/
 ├── pipeline/
-│   ├── __init__.py
-│   ├── chip_tiles.py     # Sliding-window chip generation
-│   ├── augment_data.py   # Image + bbox augmentations
-│   └── ingest_fiftyone.py # FiftyOne dataset management
+│   ├── chip_tiles.py         # GeoTIFF → 640×640 tile chipper
+│   ├── augment_data.py       # COCO-aware image + bbox augments
+│   └── ingest_fiftyone.py    # FiftyOne dataset management + QC
+├── datasets/
+│   ├── SSDD/                 # 1,160 imgs, 2,587 ships
+│   │   ├── images/, annotations/, labels/, splits/
+│   │   └── dataset.yaml
+│   └── umbra-test/           # 40 chips (30 pos + 10 neg)
+│       ├── test/images/, test/labels/
+│       └── dataset.yaml
+├── tools/
+│   ├── convert_ssdd_to_yolo_obb.py
+│   └── verify_rbox_angle.py
+├── evaluate.py               # Cross-domain evaluation
+├── data/
+│   ├── raw/                  # 7 source GeoTIFFs (~500 MB)
+│   └── chips/                # 459 generated chips + metadata for 3 images
+├── annotations/labels/       # COCO chips (8 annotated, 13 ships)
+│   ├── train/ (6 chips)
+│   ├── valid/ (1 chip)
+│   ├── test/ (1 chip)
+│   └── augmented/ (60 chips)
+├── outputs/angle_verify/     # Label verification overlays
 ├── docs/
-│   ├── methodology.md
-│   ├── usage.md
-│   └── process_document.md
-├── assets/
-│   └── screenshots/
+├── assets/screenshots/
 ├── setup.py
 ├── requirements.txt
+├── UPGRADE_PLAN.md
 └── README.md
 ```
 
 ## Quick Start
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 pip install .
 
-# Run the pipeline
 chip-tiles --input-tif data/raw/sar_image_1.tif --output-dir data/chips
 augment-data --train-annotations annotations/labels/train/_annotations.coco.json \
     --train-images-dir annotations/labels/train \
@@ -57,17 +63,19 @@ augment-data --train-annotations annotations/labels/train/_annotations.coco.json
 ingest-fiftyone --aug-coco annotations/labels/augmented/_annotations.coco.json \
     --aug-img-dir annotations/labels/augmented \
     --img-root data/chips
+python evaluate.py --data datasets/umbra-test/dataset.yaml
 ```
 
-## Dataset
+## Datasets
 
-- **Source**: Umbra X-band SAR imagery (GEC format, ~0.5m resolution)
-- **Images**: 3 scenes, ~232 MB total
-- **Chips**: 459 tiles at 640x640px with 64px overlap
-- **Annotated**: 8 chips, 13 ship instances across train/valid/test
-- **After augmentation**: 60 training images, 100 annotations
+### SSDD (Training)
+- 1,160 SAR images from TerraSAR-X, RadarSat-2, Sentinel-1
+- 2,587 annotated ships (RBox format)
+- Splits: 928 train / 232 test
 
-See `data/README.md` for download instructions and `annotations/labels/README.md` for label format details.
+### Umbra (Cross-Domain Test)
+- 40 chips from 7 GeoTIFFs (~0.5m resolution)
+- 30 annotated, 10 negative samples
 
 ## License
 

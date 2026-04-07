@@ -1,20 +1,13 @@
 # SAR Ship Detection Pipeline Usage
 
-This document describes how to use the SAR ship detection pipeline.
+This document covers the CLI tools and scripts in this repo.
 
 ## Installation
 
-1. Create and activate a virtual environment:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-2. Install dependencies and the package:
-   ```bash
-   pip install -r requirements.txt
-   pip install .
-   ```
+```bash
+pip install -r requirements.txt
+pip install .
+```
 
 ## Pipeline Components
 
@@ -40,7 +33,7 @@ chip-tiles \
 
 ### 2. Data Augmentation (`augment-data`)
 
-Apply transformations to training images and update COCO annotations:
+Apply COCO bbox-aware transformations to training images:
 
 ```bash
 augment-data \
@@ -50,11 +43,11 @@ augment-data \
     --output-coco annotations/labels/augmented/_annotations.coco.json
 ```
 
-This produces 9 augmentations per training image: horizontal/vertical flips, 90/180/270 degree rotations, noise, brightness up/down, and contrast.
+Produces 9 augmentations per image: flips, rotations, noise, brightness, contrast.
 
 ### 3. FiftyOne Integration (`ingest-fiftyone`)
 
-Load the dataset into FiftyOne for visualization, QC, and analysis:
+Load datasets into FiftyOne for visualization and QC:
 
 ```bash
 ingest-fiftyone \
@@ -62,35 +55,75 @@ ingest-fiftyone \
     --aug-img-dir annotations/labels/augmented \
     --img-root data/chips \
     --dataset-name sar_ships_dataset
-````
+```
 
-Add `--run-embeddings` to compute visual embeddings (requires more time).
+Add `--run-embeddings` for visual embeddings.
 
-## Running the Full Pipeline
+## SSDD Tools
+
+### Label Conversion
+
+Convert SSDD Pascal VOC XML to YOLO OBB format:
 
 ```bash
-# Step 1: chip all GeoTIFFs
+python tools/convert_ssdd_to_yolo_obb.py --mode xywhr --visualize
+```
+
+Verify angle convention:
+
+```bash
+python tools/convert_ssdd_to_yolo_obb.py --verify-only
+```
+
+Label output format: `class x1 y1 x2 y2 x3 y3 x4 y4` (9-value, normalized).
+
+## Evaluation
+
+Run cross-domain evaluation:
+
+```bash
+python evaluate.py --data datasets/umbra-test/dataset.yaml --weights best.pt
+```
+
+Options:
+
+```bash
+python evaluate.py \
+    --data datasets/umbra-test/dataset.yaml \
+    --weights best.pt \
+    --output-dir outputs/eval \
+    --conf-thres 0.25 \
+    --iou-thres 0.7 \
+    --imgsz 640
+```
+
+Produces confusion matrix, PR curves, mAP@50, mAP@50:95, per-class metrics, and per-image latency report.
+
+## Full Pipeline
+
+```bash
+# 1. Chip all GeoTIFFs
 for tif in data/raw/sar_image_*.tif; do
     chip-tiles --input-tif "$tif" --output-dir data/chips
 done
 
-# Step 2: augment training set
+# 2. Augment training set
 augment-data \
     --train-annotations annotations/labels/train/_annotations.coco.json \
     --train-images-dir annotations/labels/train \
     --output-images-dir annotations/labels/augmented \
     --output-coco annotations/labels/augmented/_annotations.coco.json
 
-# Step 3: load into FiftyOne
+# 3. Load into FiftyOne
 ingest-fiftyone \
     --aug-coco annotations/labels/augmented/_annotations.coco.json \
     --aug-img-dir annotations/labels/augmented \
-    --img-root data/chips \
-    --dataset-name sar_ships_dataset
+    --img-root data/chips
 ```
 
 ## Notes
 
-- The pipeline uses no hardcoded paths — all inputs are CLI arguments
-- Tile size defaults to 640x640 with 64px overlap (10% stride), configurable
-- Augmentation seed is fixed (42) for reproducibility
+- All scripts use CLI arguments — no hardcoded paths
+- Tile size: 640x640 with 64px overlap (configurable)
+- Augmentation seed: 42 (fixed for reproducibility)
+- SSDD labels use 9-value per-detection format with corners normalized to [0,1]

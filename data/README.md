@@ -2,14 +2,16 @@
 
 ## Source GeoTIFFs
 
-The pipeline works with Umbra X-band SAR imagery in GEC (Geocoded Ellipsoid Corrected) format.
-
-### What's Already Here
-
-The three source GeoTIFFs are included in `data/raw/`:
-- `sar_image_1.tif` (~60 MB)
-- `sar_image_2.tif` (~86 MB)
-- `sar_image_3.tif` (~86 MB)
+The seven source GeoTIFFs are included in `data/raw/`:
+| File | Size |
+|------|------|
+| `sar_image_1.tif` | ~60 MB |
+| `sar_image_2.tif` | ~86 MB |
+| `sar_image_3.tif` | ~86 MB |
+| `sar_image_4.tif` | ~100 MB |
+| `sar_image_5.tif` | ~120 MB |
+| `sar_image_6.tif` | ~100 MB |
+| `sar_image_7.tif` | ~120 MB |
 
 ### Download Your Own
 
@@ -31,4 +33,4 @@ Query the Umbra STAC catalog for GEC products and download the assets. Look for 
 
 - All source imagery is X-band SAR at ~0.5m resolution
 - Files are in GeoTIFF format with `_GEC` (Geocoded Ellipsoid Corrected) processing level
-- Total dataset size: ~232 MB included
+- Total dataset size: ~500 MB included
