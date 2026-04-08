@@ -4,16 +4,16 @@
 
 All seven source GeoTIFFs are included in `data/raw/` via Git LFS:
 
-| File | Size | Notes |
-|------|------|-------|
-| `sar_image_1.tif` | 60 MB | Original set |
-| `sar_image_2.tif` | 86 MB | Original set |
-| `sar_image_3.tif` | 86 MB | Original set |
-| `sar_image_4.tif` | 193 MB | Added during Phase 2 |
-| `sar_image_5.tif` | 303 MB | Added during Phase 2 |
-| `sar_image_6.tif` | 135 MB | Added during Phase 2 |
-| `sar_image_7.tif` | 458 MB | Added during Phase 2 |
-| **Total** | **~1.3 GB** | |
+| File | Size |
+|------|------|
+| `sar_image_1.tif` | 60 MB |
+| `sar_image_2.tif` | 86 MB |
+| `sar_image_3.tif` | 86 MB |
+| `sar_image_4.tif` | 193 MB |
+| `sar_image_5.tif` | 303 MB |
+| `sar_image_6.tif` | 135 MB |
+| `sar_image_7.tif` | 458 MB |
+| **Total** | **~1.3 GB** |
 
 **Note:** These files are stored via Git LFS. After cloning, run:
 ```bash
