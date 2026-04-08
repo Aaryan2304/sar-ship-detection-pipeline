@@ -44,7 +44,6 @@ weights/*.pt
 weights/*.onnx
 weights/*.engine
 !weights/best.pt
-runs/
 *.pt
 *.onnx
 *.engine
@@ -59,5 +58,4 @@ outputs/
 data/ssrd-hrsid/
 data/chips/
 HERMES.md
-# Large GeoTIFFs (download separately)
-data/raw/*.tif
+.worktrees/
