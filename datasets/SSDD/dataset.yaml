@@ -4,9 +4,9 @@
 # Splits: 928 train / 232 test (official SSDD splits)
 
 path: datasets/SSDD
-train: images
-val: images
-test: images
+train: train.txt
+val: val.txt
+test: val.txt
 
 # Classes
 names:

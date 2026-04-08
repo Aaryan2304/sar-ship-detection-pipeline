@@ -33,6 +33,7 @@ env/
 tmp/
 *.tmp
 *.log
+training.log
 
 # Planning / personal notes (internal, not for public repo)
 project_upgrade.*
@@ -44,6 +45,19 @@ weights/*.onnx
 weights/*.engine
 !weights/best.pt
 runs/
+*.pt
+*.onnx
+*.engine
+
+# Verification outputs (regenerate with tools)
+outputs/
+
+# Ultralytics cache
+*.cache
 
 # Downloaded external datasets
 data/ssrd-hrsid/
+data/chips/
+HERMES.md
+# Large GeoTIFFs (download separately)
+data/raw/*.tif

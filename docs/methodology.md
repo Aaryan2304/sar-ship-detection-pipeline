@@ -14,10 +14,22 @@ The pipeline covers two parallel workflows:
 3. **Dataset Management**: Load into FiftyOne for QC, metadata, and visualization
 
 ### 2. OBB Training (SSDD → Umbra cross-domain)
-1. **SSDD Label Conversion**: Pascal VOC XML with `rotated_bndbox` → YOLO OBB format
+1. **SSDD Label Conversion**: Pascal VOC XML with `rotated_bndbox` → YOLO OBB format (9-value corner format)
 2. **Angle Verification**: Confirmed standard 2D rotation (0.95px median error)
-3. **Model Training**: YOLOv8/v11-OBB via Ultralytics
+3. **Model Training**: YOLO26-OBB via Ultralytics
 4. **Cross-Domain Eval**: Test on 40 Umbra chips (30 annotated, 10 negative)
+
+## Phase 2 Results (Baseline Model)
+
+| Metric | Value |
+|--------|-------|
+| **mAP@50** | 0.9868 |
+| **mAP@50:95** | 0.7957 |
+| **Precision** | 0.9662 |
+| **Recall** | 0.9469 |
+| **Inference** | 18.9 ms (PyTorch, 640px) |
+
+Model: `yolo26s-obb.pt` trained for 50 epochs on SSDD (928 train / 232 val).
 
 ## Methodology Details
 
@@ -79,4 +91,4 @@ The pipeline integrates FiftyOne to manage datasets with:
 - FiftyOne dataset management
 - SSDD: Zhang et al., "SAR Ship Detection Dataset", Remote Sensing 2021
 - OpenCV and rasterio for image processing
-- Ultralytics YOLOv8/v11-OBB for training
+- Ultralytics YOLO26-OBB for training

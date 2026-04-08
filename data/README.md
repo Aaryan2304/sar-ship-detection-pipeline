@@ -2,16 +2,12 @@
 
 ## Source GeoTIFFs
 
-The seven source GeoTIFFs are included in `data/raw/`:
+The three source GeoTIFFs are included in `data/raw/`:
 | File | Size |
 |------|------|
 | `sar_image_1.tif` | ~60 MB |
 | `sar_image_2.tif` | ~86 MB |
 | `sar_image_3.tif` | ~86 MB |
-| `sar_image_4.tif` | ~100 MB |
-| `sar_image_5.tif` | ~120 MB |
-| `sar_image_6.tif` | ~100 MB |
-| `sar_image_7.tif` | ~120 MB |
 
 ### Download Your Own
 
