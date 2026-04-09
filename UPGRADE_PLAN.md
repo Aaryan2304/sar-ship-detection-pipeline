@@ -133,10 +133,28 @@ This is the metric that matters for real deployment.
 
 | Variant | Method | Hypothesis |
 |---------|--------|------------|
-| A | Per-chip percentile stretch (current) | Local contrast helps heterogeneous scenes |
-| B | Global normalization (dataset mean/std) | Global consistency helps domain transfer |
+| A | Raw pixels / 255 (Ultralytics default) | Baseline — no explicit normalization |
+| B | Per-chip 1st-99th percentile stretch | Normalize intensity across sensors/scenes |
 
-Train two models, identical except normalization. Compare SSDD mAP and Umbra mAP.
+**Results (2026-04-09):**
+
+| Metric | A: raw/255 | B: p-stretch | Delta |
+|--------|-----------|-------------|-------|
+| SSDD mAP@50 | 0.9868 | 0.9801 | -0.67% |
+| SSDD mAP@50:95 | 0.7957 | 0.6990 | -9.67% |
+| **Umbra mAP@50** | 0.1159 | **0.1754** | **+51.3%** |
+| Umbra mAP@50:95 | 0.0548 | 0.0593 | +8.2% |
+| Umbra Precision | 0.2705 | 0.2926 | +8.2% |
+| **Umbra Recall** | 0.1081 | **0.2162** | **+100%** |
+| Images w/ preds (Umbra) | 22/40 | 34/40 | +55% |
+
+Per-chip percentile stretch significantly improves cross-domain recall (+100%) by
+normalizing intensity distributions between SSDD and Umbra. However, mAP@50 remains
+low (0.175) due to scale mismatch — the model predicts undersized boxes because SSDD
+trains on small ships. The dominant remaining failure mode is scale, not intensity.
+
+Scripts: `tools/normalize_chips.py` (preprocessing), `tools/evaluate.py` (eval + overlays)
+Overlays: `outputs/umbra_eval/overlays/` (Variant A), `outputs/umbra_eval/variant_b_overlays/` (Variant B)
 
 Skip speckle filtering — Lee filtering vs raw has been exhaustively characterized
 in the literature (2-5% mAP improvement, scene-dependent). The normalization ablation
