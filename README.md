@@ -13,7 +13,9 @@ A complete SAR ship detection pipeline that:
 5. **Augments** COCO-labeled chips with 9 transformations (bbox-aware)
 6. **Loads** everything into FiftyOne for QC and visualization
 
-## Phase 2 Results (Baseline Model)
+## Results
+
+### Phase 2: Baseline (SSDD In-Domain)
 
 | Metric | Value |
 |--------|-------|
@@ -21,9 +23,19 @@ A complete SAR ship detection pipeline that:
 | **mAP@50:95** | 0.7957 |
 | **Precision** | 0.9662 |
 | **Recall** | 0.9469 |
-| **Inference** | 18.9 ms (PyTorch, 640px) |
 
-Model: `yolo26s-obb.pt` trained for 50 epochs on SSDD (928 train / 232 val).
+Model: YOLO26s-OBB, 50 epochs on SSDD (928 train / 232 val).
+
+### Phase 3: Cross-Domain Evaluation (SSDD → Umbra)
+
+| Variant | Normalization | Umbra mAP@50 | Umbra Recall |
+|---------|--------------|-------------|-------------|
+| A (baseline) | raw / 255 | 0.1159 | 0.1081 |
+| **B** | **per-chip percentile stretch** | **0.1754 (+51%)** | **0.2162 (+100%)** |
+
+Variant B applies a 1st-99th percentile stretch per chip before training. This normalizes intensity distributions between SSDD (narrow dark range) and Umbra (full dynamic range), doubling recall. See `tools/normalize_chips.py` for implementation.
+
+The dominant remaining failure mode is **scale mismatch** — the model predicts undersized boxes because SSDD trains on small ships. This will be addressed in Phase 4 (SAHI inference) and Phase 5 (fine-tuning on Umbra chips).
 
 ## Quick Start
 
@@ -43,8 +55,14 @@ python tools/convert_ssdd_to_yolo_obb.py --mode corners
 # Verify angle convention
 python tools/verify_rbox_angle.py
 
-# Evaluate on Umbra cross-domain test set
-python tools/evaluate.py --data datasets/umbra-test/dataset.yaml
+# Evaluate on Umbra cross-domain test set (with visual overlays)
+python tools/evaluate.py --weights runs/baseline/weights/best.pt --data datasets/umbra-test/dataset.yaml
+
+# Generate normalized dataset (per-chip percentile stretch)
+python tools/normalize_chips.py --input datasets/SSDD --output datasets/SSDD_norm
+
+# Train on normalized dataset (Variant B)
+python tools/train.py --data datasets/SSDD_norm/dataset.yaml --name variant_b_norm
 ```
 
 ## Project Structure
@@ -56,9 +74,10 @@ sar-ship-detection-pipeline/
 │   ├── augment_data.py         # COCO-aware image + bbox augments
 │   └── ingest_fiftyone.py      # FiftyOne dataset management + QC
 ├── tools/
-│   ├── train.py                # Training script (SAR augmentations documented)
-│   ├── evaluate.py             # Cross-domain evaluation
-│   ├── baseline_validate.py    # Baseline validation + inference latency
+│   ├── train.py                      # Training script (SAR augmentations documented)
+│   ├── evaluate.py                   # Cross-domain evaluation + visual overlays
+│   ├── baseline_validate.py          # Baseline validation + inference latency
+│   ├── normalize_chips.py            # Per-chip percentile stretch preprocessing
 │   ├── convert_ssdd_to_yolo_obb.py   # SSDD XML → YOLO OBB conversion
 │   └── verify_rbox_angle.py          # Angle convention verification
 ├── datasets/
